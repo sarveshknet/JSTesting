@@ -1,0 +1,65 @@
+﻿@model JSTesting.Models.ReqestModel
+
+@{
+    ViewBag.Title = "Text Converter";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <script src="~/Scripts/angular.min.js"></script>
+    <script type="text/javascript">
+        var testApp = angular.module("testModule", [])
+            .controller("testController", function ($scope, $http) {
+                $scope.SendData = function () {
+                    //alert('clickef')
+                    $http.post('http://localhost:9944/api/values',
+                        {
+                            'Format': document.getElementById('Format').value,
+                            'TextToConvert': document.getElementById('TextToConvert').value
+                        }).then(function (response) {
+                            //alert(response.data);
+                            if (document.getElementById('Format').value == "xml") {
+                                $scope.outputContent = response.data;
+                                document.getElementById('formattedOutput').innerHTML = "";
+                            }
+                            else {
+                                $scope.outputContent = "";
+                                document.getElementById('formattedOutput').innerHTML = response.data;
+                            }
+                        }).error(function (error) {
+                            //alert(error.message);
+                        });
+                }
+            });
+
+    </script>
+    <div ng-app="testModule">
+        <h4>Format Convertor</h4>
+
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Format)
+            </dt>
+
+            <dd>
+                @Html.EditorFor(model => model.Format)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TextToConvert)
+            </dt>
+
+
+            <dd>
+                @Html.TextAreaFor(model => model.TextToConvert, new { cols = 100, rows = 10 })
+            </dd>
+        </dl>
+        <hr />
+        <div ng-controller="testController">
+            <button ng-click="SendData()">Convert Text</button>
+            <br />
+            <label>{{outputContent}}</label><br />
+            <label id="formattedOutput"></label>
+            <br />
+        </div>
+    </div>
+    <p>
+    </p>
